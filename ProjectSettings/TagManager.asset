@@ -8,9 +8,14 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Overlay UI
   - Water
   - UI
+  - Stencil
+  - Rod
+  - WaterSurface
+  - Fish
+  - Destructible
   - 
   - 
   - 
@@ -20,6 +25,8 @@ TagManager:
   - 
   - 
   - 
+  - ImmersiveDebugger
+  - ImmersiveDebuggerMesh
   - 
   - 
   - 
@@ -29,14 +36,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - OVROverlayCanvas Rendering
   m_SortingLayers:
   - name: Default
     uniqueID: 0

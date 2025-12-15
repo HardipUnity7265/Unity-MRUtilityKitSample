@@ -1,9 +1,9 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-using System;
-using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
@@ -24,9 +24,9 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
         [SerializeField]
         GameObject _axes;
 
-        MRUKTrackable _trackable;
+        GameObject _skyBox;
 
-        OVRPassthroughLayer _passthroughLayer;
+        MRUKTrackable _trackable;
 
         readonly HashSet<string> _logOnce = new();
 
@@ -38,29 +38,13 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
             }
         }
 
-        void Update()
-        {
-            if (_passthroughLayer)
-            {
-                if (BoxTransform)
-                {
-                    // Only draw the box when we're using surface projected passthrough
-                    BoxTransform.gameObject.SetActive(_passthroughLayer.isActiveAndEnabled);
-                }
-
-                if (_axes)
-                {
-                    _axes.SetActive(!_passthroughLayer.isActiveAndEnabled);
-                }
-            }
-        }
-
-        public void Initialize(OVRPassthroughLayer passthroughLayer, MRUKTrackable trackable)
+        public void Initialize(MRUKTrackable trackable, GameObject skybox)
         {
             if (trackable == null)
                 throw new ArgumentNullException(nameof(trackable));
 
-            _passthroughLayer = passthroughLayer;
+            _skyBox = skybox;
+
             _trackable = trackable;
 
             if (_trackable.VolumeBounds == null)
@@ -94,25 +78,29 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
             if (BoxTransform)
             {
                 BoxTransform.localScale = box.size;
-
-                // Register the owning object with passthrough layer
-                var meshFilter = BoxTransform.GetComponentInChildren<MeshFilter>();
-                if (meshFilter)
-                {
-                    if (passthroughLayer)
-                    {
-                        passthroughLayer.AddSurfaceGeometry(meshFilter.gameObject, true);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"Property '{nameof(BoxTransform)}' named '{BoxTransform.name}' has no {nameof(MeshFilter)}. Ignoring passthrough layer.");
-                }
             }
             else
             {
-                Debug.LogWarning($"Property '{nameof(BoxTransform)}' not set; ignoring passthrough layer.");
+                Debug.LogWarning($"Property '{nameof(BoxTransform)}' not set;");
             }
+        }
+
+        public void SetPassthroughMode(bool isFullPassthrough)
+        {
+            if (BoxTransform)
+            {
+                BoxTransform.gameObject.SetActive(!isFullPassthrough);
+            }
+
+            if (_axes)
+            {
+                _axes.SetActive(isFullPassthrough);
+            }
+        }
+
+        private void Update()
+        {
+            SetPassthroughMode(!_skyBox.activeInHierarchy);
         }
     }
 }

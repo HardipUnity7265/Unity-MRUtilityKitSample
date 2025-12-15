@@ -23,6 +23,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 171747763606904435}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -30,13 +31,13 @@ Transform:
   m_Children:
   - {fileID: 702558968542686143}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1023800174725368916
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 9004431037516125748}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
@@ -98,16 +99,21 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 421d0320f770ffe4086e779dd0ee5d38, type: 2}
-    - target: {fileID: -5754084199372789682, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: -3802603881104546420, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
+      objectReference: {fileID: 2100000, guid: 6bb5c10a237c11d4daccaf044e9b23df, type: 2}
     - target: {fileID: 919132149155446097, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
       propertyPath: m_Name
       value: Plant2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 565471757646083968}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5770676058722508675}
   m_SourcePrefab: {fileID: 100100000, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
 --- !u!1 &212844578727801093 stripped
 GameObject:
@@ -132,12 +138,21 @@ MonoBehaviour:
   BorderXPositive: 1
   ScalingY: 1
   BorderYNegative: 0.01
-  BorderYPositive: 0.26
+  BorderYPositive: 0.113
   ScalingZ: 1
   BorderZNegative: 1
   BorderZPositive: 1
   StretchCenter: 0
   UpdateInPlayMode: 1
+  OriginalMesh: {fileID: -3802603881104546420, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}
+--- !u!33 &5770676058722508675
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212844578727801093}
+  m_Mesh: {fileID: 0}
 --- !u!4 &702558968542686143 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9c2abe26f724cac4abc35ea6c1c7c8f8, type: 3}

@@ -23,6 +23,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2297617308564940800}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -30,13 +31,13 @@ Transform:
   m_Children:
   - {fileID: 8204222388970695622}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &8525870133935787053
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 3145948671187303770}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 67994f55729c0984881a99c7570f9945, type: 3}
@@ -98,16 +99,22 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 67994f55729c0984881a99c7570f9945, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 54b91a2355722884288b2537a2a702f2, type: 2}
+      objectReference: {fileID: 2100000, guid: 37d75c8d02455f04687b6cc63eed1b05, type: 2}
     - target: {fileID: -5754084199372789682, guid: 67994f55729c0984881a99c7570f9945, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 3577721132386661576, guid: 67994f55729c0984881a99c7570f9945, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 67994f55729c0984881a99c7570f9945, type: 3}
       propertyPath: m_Name
       value: Plant4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 67994f55729c0984881a99c7570f9945, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4446625958451673735}
   m_SourcePrefab: {fileID: 100100000, guid: 67994f55729c0984881a99c7570f9945, type: 3}
 --- !u!4 &8204222388970695622 stripped
 Transform:
@@ -137,9 +144,10 @@ MonoBehaviour:
   BorderXPositive: 1
   ScalingY: 1
   BorderYNegative: 0.01
-  BorderYPositive: 0.32
+  BorderYPositive: 0.112
   ScalingZ: 1
   BorderZNegative: 1
   BorderZPositive: 1
   StretchCenter: 0
-  UpdateInPlayMode: 0
+  UpdateInPlayMode: 1
+  OriginalMesh: {fileID: 3577721132386661576, guid: 67994f55729c0984881a99c7570f9945, type: 3}

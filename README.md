@@ -30,6 +30,7 @@ More information on MR Utility Kit can be found on our [developer website](https
 - [Keyboard Tracking](./Assets/MRUKSamples/KeyboardTracker): A scene demonstrating generic keyboard detection and tracking.
 - [Bouncing Ball](./Assets/MRUKSamples/BouncingBall): A scene showing virtual balls interacting with the physical environment.
 - [QR Code Detection](./Assets/MRUKSamples/QRCodeDetection): A scene demonstrating QR code detection.
+- [HiFi Scene](./Assets/MRUKSamples/HiFiScene): A scene showing multiple floors and ceilings, slanted ceilings, inner walls.
 
 More information on all samples can be found on our [developer website](https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-samples).
 

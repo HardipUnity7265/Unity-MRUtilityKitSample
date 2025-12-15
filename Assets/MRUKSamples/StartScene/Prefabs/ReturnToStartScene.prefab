@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 487498352821731545}
   - component: {fileID: 3071554655229633007}
   - component: {fileID: 9005808134161586246}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Tooltip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9030407185943233021}
-  m_Text: "Press Start (\u2630) to go back \nto the Start Scene"
+  m_Text: "Press the Menu Button\n to go back to the Start Scene"
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1

@@ -1,10 +1,9 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace MRUtilityKitSample.NavMesh
@@ -20,58 +19,59 @@ namespace MRUtilityKitSample.NavMesh
     [MetaCodeSample("MRUKSample-NavMesh")]
     public class NavMeshAgentController : MonoBehaviour
     {
-        private float delayTimer; // interval between random point discovery
-        private UnityEngine.AI.NavMeshAgent agent;
-        private GameObject positionIndicator;
-        private float timer; // used to calculate current timer value
-        public bool VisualizeTargetPosition = false;
+        [SerializeField] private GameObject _positionIndicator;
+        [HideInInspector] public GameObject PositionIndicatorInstance; // used to visualize the target position
+        private NavMeshAgent _agent;
+        private Animator _animator;
 
-        void OnEnable()
+        private void Update()
         {
-            agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-            timer = delayTimer;
-            var childTransform = transform.Find("PositionIndicator");
-            positionIndicator = childTransform.gameObject;
+            if (Input.GetKeyDown(KeyCode.Space) || OVRInput.GetDown(OVRInput.RawButton.A) ||
+                OVRInput.GetDown(OVRInput.RawButton.X))
+            {
+                SetNewTargetObjectAndPostion();
+            }
         }
 
-        // Core loop. Agent will find a new position to move at random intervals and speed.
-        void Update()
+        private void OnEnable()
         {
-            timer += Time.deltaTime;
+            _agent = GetComponent<NavMeshAgent>();
+            Invoke("SetNewTargetObjectAndPostion", 1f);
+        }
 
-            if (timer >= delayTimer)
+        public void SetNewTargetObjectAndPostion() //called by animation event
+        {
+            if (PositionIndicatorInstance)
             {
-                // set the new set of randomize values for target position and speed
-                var newPos = RandomNavPoint();
-
-                var room = MRUK.Instance?.GetCurrentRoom();
-                if (!room)
-                {
-                    return;
-                }
-
-                var test = room.IsPositionInRoom(newPos,
-                    false); // occasionally NavMesh will generate areas outside the room, so we must test the value from RandomNavPoint
-
-                if (!test)
-                {
-                    Debug.Log("[NavMeshAgent] [Error]: destination is outside the room bounds, resetting to 0");
-                    newPos = Vector3.zero;
-                }
-
-                if (VisualizeTargetPosition)
-                {
-                    positionIndicator.transform.parent = null;
-                    positionIndicator.transform.position = newPos;
-                }
-
-                agent.SetDestination(newPos);
-                var newDelay = Random.Range(2f, 6.0f);
-                delayTimer = newDelay;
-                var newSpeed = Random.Range(1.2f, 1.6f);
-                agent.speed = newSpeed;
-                timer = 0;
+                Destroy(PositionIndicatorInstance);
             }
+            PositionIndicatorInstance = Instantiate(_positionIndicator, SetNewDestination(), Quaternion.identity);
+        }
+
+        public Vector3 SetNewDestination()
+        {
+            // set the new set of randomized values for target position and speed
+            var newPos = RandomNavPoint();
+
+            var room = MRUK.Instance?.GetCurrentRoom();
+            if (!room)
+            {
+                return _agent.transform.position;
+            }
+
+            var test = room.IsPositionInRoom(newPos,
+                false); // occasionally NavMesh will generate areas outside the room, so we must test the value from RandomNavPoint
+
+            if (!test)
+            {
+                Debug.Log("[NavMeshAgent] [Error]: destination is outside the room bounds, resetting to 0");
+                newPos = Vector3.zero;
+            }
+
+            _agent.SetDestination(newPos);
+            var newSpeed = Random.Range(1.2f, 1.6f);
+            _agent.speed = newSpeed;
+            return newPos;
         }
 
         // generate a new position on the NavMesh
@@ -86,9 +86,9 @@ namespace MRUtilityKitSample.NavMesh
             }
 
             // Compute the area of each triangle and the total surface area of the navmesh
-            float totalArea = 0.0f;
-            List<float> areas = new List<float>();
-            for (int i = 0; i < triangulation.indices.Length;)
+            var totalArea = 0.0f;
+            var areas = new List<float>();
+            for (var i = 0; i < triangulation.indices.Length;)
             {
                 var i0 = triangulation.indices[i];
                 var i1 = triangulation.indices[i + 1];
@@ -97,7 +97,7 @@ namespace MRUtilityKitSample.NavMesh
                 var v1 = triangulation.vertices[i1];
                 var v2 = triangulation.vertices[i2];
                 var cross = Vector3.Cross(v1 - v0, v2 - v0);
-                float area = cross.magnitude * 0.5f;
+                var area = cross.magnitude * 0.5f;
                 totalArea += area;
                 areas.Add(area);
                 i += 3;
@@ -106,7 +106,7 @@ namespace MRUtilityKitSample.NavMesh
             // Pick a random triangle weighted by surface area (triangles with larger surface
             // area have more chance of being chosen)
             var rand = Random.Range(0, totalArea);
-            int triangleIndex = 0;
+            var triangleIndex = 0;
             for (; triangleIndex < areas.Count - 1; ++triangleIndex)
             {
                 rand -= areas[triangleIndex];
@@ -126,8 +126,8 @@ namespace MRUtilityKitSample.NavMesh
                 var v2 = triangulation.vertices[i2];
 
                 // Calculate a random point on that triangle
-                float u = Random.Range(0.0f, 1.0f);
-                float v = Random.Range(0.0f, 1.0f);
+                var u = Random.Range(0.0f, 1.0f);
+                var v = Random.Range(0.0f, 1.0f);
                 if (u + v > 1.0f)
                 {
                     if (u > v)

@@ -23,6 +23,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5560696476520144074}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -30,7 +31,6 @@ Transform:
   m_Children:
   - {fileID: 4934928028065739173}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5852706127580701998
 GameObject:
@@ -55,19 +55,20 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5852706127580701998}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4934928028065739173}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4897343092141020750
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 2571886554412373521}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
@@ -84,7 +85,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -129,16 +130,28 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: bcb40220367b113489888acd51cb1932, type: 2}
+      objectReference: {fileID: 2100000, guid: 3357bca768cec574ca92c03c33ff55a9, type: 2}
     - target: {fileID: -5754084199372789682, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 3859192021068367919, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
       propertyPath: m_Name
       value: Couch
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7741564490356195386}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 416462693930975746}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6382615820289516069}
   m_SourcePrefab: {fileID: 100100000, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
 --- !u!4 &4934928028065739173 stripped
 Transform:
@@ -163,14 +176,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PivotOffset: {x: 0, y: 0, z: 0}
-  ScalingX: 1
-  BorderXNegative: 0.32
-  BorderXPositive: 0.82
-  ScalingY: 1
-  BorderYNegative: 0.01
-  BorderYPositive: 0.12
-  ScalingZ: 0
-  BorderZNegative: 0.001
-  BorderZPositive: 0.01
+  ScalingX: 0
+  BorderXNegative: 0.055
+  BorderXPositive: 0.37
+  ScalingY: 0
+  BorderYNegative: 0.07
+  BorderYPositive: 0.404
+  ScalingZ: 1
+  BorderZNegative: 0.01
+  BorderZPositive: 0.105
+  StretchCenter: 0
   UpdateInPlayMode: 1
   OriginalMesh: {fileID: 3859192021068367919, guid: e246b2fd10c495344b1e225de21a6edb, type: 3}
+--- !u!33 &6382615820289516069
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5708227082308971295}
+  m_Mesh: {fileID: 0}

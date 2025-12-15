@@ -3,6 +3,7 @@
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace MRUtilityKitSample.NavMesh
 {
@@ -10,12 +11,24 @@ namespace MRUtilityKitSample.NavMesh
     public class NavMeshSampleController : MonoBehaviour
     {
         public SceneNavigation SceneNavigation;
-        public bool useGlobalMesh = false;
+        public bool useGlobalMesh;
+        private NavMeshAgentController _navMeshAgentController;
+        private ImmersiveSceneDebugger _immersiveSceneDebugger;
+        private Animator _animator;
+        private NavMeshAgent _agent;
 
-        // Update is called once per frame
-        void Update()
+        private void Start()
         {
-            if (OVRInput.GetDown(OVRInput.RawButton.B))
+            _animator = GetComponent<Animator>();
+            _agent = GetComponent<NavMeshAgent>();
+            _navMeshAgentController = FindAnyObjectByType<NavMeshAgentController>();
+            _immersiveSceneDebugger = FindAnyObjectByType<ImmersiveSceneDebugger>();
+        }
+
+        private void Update()
+        {
+            if (OVRInput.GetDown(OVRInput.RawButton.RHandTrigger) ||
+                OVRInput.GetDown(OVRInput.RawButton.LHandTrigger))
             {
                 if (!SceneNavigation)
                 {
@@ -24,7 +37,26 @@ namespace MRUtilityKitSample.NavMesh
 
                 useGlobalMesh = !useGlobalMesh;
                 SceneNavigation.ToggleGlobalMeshNavigation(useGlobalMesh);
+                if (_immersiveSceneDebugger)
+                {
+                    _immersiveSceneDebugger.DisplayNavMesh(false);
+                    _immersiveSceneDebugger.DisplayNavMesh(true);
+                }
+
+                if (_navMeshAgentController)
+                {
+                    _navMeshAgentController.SetNewTargetObjectAndPostion();
+                }
             }
+
+            if (_animator && _agent)
+            {
+                AnimateAgent();
+            }
+        }
+
+        private void AnimateAgent()
+        {
         }
     }
 }

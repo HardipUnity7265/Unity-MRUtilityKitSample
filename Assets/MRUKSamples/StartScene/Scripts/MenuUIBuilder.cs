@@ -104,14 +104,13 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
 
             if (generalScenes.Count > 0)
             {
-                AddLabel("MRUK Sample Scenes");
                 foreach (var scene in generalScenes)
                 {
                     AddButton(Path.GetFileNameWithoutExtension(scene.Item2), () => LoadScene(scene.Item1));
                 }
             }
 
-            AddLabel("Press ☰ at any time to return to this scene");
+            AddLabel("Press the Menu Button at any time to return to this scene");
         }
 
         /// <summary>
@@ -174,7 +173,7 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
         private RectTransform AddLabel(string label)
         {
             var rt = Instantiate(_labelPrefab).GetComponent<RectTransform>();
-            rt.GetComponent<Text>().text = label;
+            rt.GetComponent<TextMeshProUGUI>().text = label;
             AddRect(rt);
             return rt;
         }
@@ -187,15 +186,10 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
         {
             r.transform.SetParent(_targetContentPanel, false);
             _insertedElements.Add(r);
-            if (gameObject.activeInHierarchy)
-            {
-                Relayout();
-            }
         }
 
         private void Show()
         {
-            Relayout();
             gameObject.SetActive(true);
         }
 

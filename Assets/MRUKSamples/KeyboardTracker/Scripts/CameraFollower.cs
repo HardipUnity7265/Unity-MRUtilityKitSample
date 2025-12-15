@@ -16,7 +16,13 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
         [Tooltip("How quickly this object will move to the target position.")]
         [Range(0, 1)]
         float _stiffness = .1f;
-
+        void Start()
+        {
+            if (_camera == null)
+            {
+                _camera = Camera.main;
+            }
+        }
         void Update()
         {
             var targetPosition = _camera.transform.position + _camera.transform.forward * _distance;

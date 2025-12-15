@@ -3,6 +3,7 @@
 using UnityEngine;
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
+using System;
 
 namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
 {
@@ -13,10 +14,7 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
         GameObject _prefab;
 
         [SerializeField]
-        OVRPassthroughLayer _passthroughUnderlay;
-
-        [SerializeField]
-        OVRPassthroughLayer _passthroughOverlay;
+        GameObject _skybox;
 
         public void OnTrackableAdded(MRUKTrackable trackable)
         {
@@ -35,7 +33,7 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
             var boundaryVisualizer = newGameObject.GetComponentInChildren<Bounded3DVisualizer>();
             if (boundaryVisualizer)
             {
-                boundaryVisualizer.Initialize(_passthroughOverlay, trackable);
+                boundaryVisualizer.Initialize(trackable, _skybox);
             }
         }
 
@@ -50,18 +48,7 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
             // Toggle between full passthrough and surface-projected passthrough
             if (OVRInput.GetDown(OVRInput.RawButton.A))
             {
-                if (_passthroughOverlay.isActiveAndEnabled)
-                {
-                    _passthroughOverlay.gameObject.SetActive(false);
-                    _passthroughUnderlay.gameObject.SetActive(true);
-                    Camera.main.clearFlags = CameraClearFlags.SolidColor;
-                }
-                else
-                {
-                    _passthroughOverlay.gameObject.SetActive(true);
-                    _passthroughUnderlay.gameObject.SetActive(false);
-                    Camera.main.clearFlags = CameraClearFlags.Skybox;
-                }
+                _skybox.SetActive(!_skybox.activeInHierarchy);
             }
         }
     }

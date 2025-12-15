@@ -23,13 +23,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5974995804768572391}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6582802017441907239}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8328485019990869486
 GameObject:
@@ -54,6 +54,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8328485019990869486}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -61,13 +62,13 @@ Transform:
   m_Children:
   - {fileID: 6582802017441907239}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6687976235829880268
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 184462064144091229}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2451b5a68f70edd4fb8ad1d861cf3cab, type: 3}
@@ -135,6 +136,15 @@ PrefabInstance:
       value: BoxCardboard
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2451b5a68f70edd4fb8ad1d861cf3cab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3175846547146210196}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2451b5a68f70edd4fb8ad1d861cf3cab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8434416195292678755}
   m_SourcePrefab: {fileID: 100100000, guid: 2451b5a68f70edd4fb8ad1d861cf3cab, type: 3}
 --- !u!1 &5769426830120048797 stripped
 GameObject:
@@ -159,10 +169,11 @@ MonoBehaviour:
   BorderXPositive: 0.38
   ScalingY: 1
   BorderYNegative: 0.01
-  BorderYPositive: 0.82
+  BorderYPositive: 0.554
   ScalingZ: 1
-  BorderZNegative: 0.001
+  BorderZNegative: 0.01
   BorderZPositive: 0.01
+  StretchCenter: 0
   UpdateInPlayMode: 1
   OriginalMesh: {fileID: -5217546879040905463, guid: 2451b5a68f70edd4fb8ad1d861cf3cab, type: 3}
 --- !u!4 &6582802017441907239 stripped
