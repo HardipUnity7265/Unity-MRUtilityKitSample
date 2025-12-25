@@ -2,24 +2,19 @@
 
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
-
 using System;
-
+using System.Collections.Generic; // Added for Dictionary
 using UnityEngine;
-
 
 namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
 {
     [MetaCodeSample("MRUKSample-QRCodeDetection")]
     public class QRCodeManager : MonoBehaviour
     {
-        //
-        // Static interface
-
+        // ------------- Static Interface (Unchanged) -------------
         public const string ScenePermission = OVRPermissionsRequester.ScenePermission;
-
         public static bool IsSupported => MRUK.Instance.QRCodeTrackingSupported;
-
+        
         public static bool HasPermissions
 #if UNITY_EDITOR
             => true;
@@ -27,24 +22,19 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
             => UnityEngine.Android.Permission.HasUserAuthorizedPermission(ScenePermission);
 #endif
 
-        public static int ActiveTrackedCount
-            => s_instance ? s_instance._activeCount : 0;
+        public static int ActiveTrackedCount => s_instance ? s_instance._activeCount : 0;
 
         public static bool TrackingEnabled
         {
             get => s_instance && s_instance._mrukInstance && s_instance._mrukInstance.SceneSettings.TrackerConfiguration.QRCodeTrackingEnabled;
             set
             {
-                if (!s_instance || !s_instance._mrukInstance)
-                {
-                    return;
-                }
+                if (!s_instance || !s_instance._mrukInstance) return;
                 var config = s_instance._mrukInstance.SceneSettings.TrackerConfiguration;
                 config.QRCodeTrackingEnabled = value;
                 s_instance._mrukInstance.SceneSettings.TrackerConfiguration = config;
             }
         }
-
 
         public static void RequestRequiredPermissions(Action<bool> onRequestComplete)
         {
@@ -53,86 +43,39 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
                 Debug.LogError($"{nameof(RequestRequiredPermissions)} failed; no QRCodeManager instance.");
                 return;
             }
-
 #if UNITY_EDITOR
-            const string kCantRequestMsg =
-                "Cannot request Android permission when using Link or XR Sim. " +
-                "For Link, enable the spatial data permission from the Link app under Settings > Beta > Spatial Data over Meta Quest Link. " +
-                "For XR Sim, no permission is necessary.";
-
-            Log(kCantRequestMsg, LogType.Warning);
-
             onRequestComplete?.Invoke(HasPermissions);
 #else
-            Log($"Requesting {ScenePermission} ... (currently: {HasPermissions})");
-
             var callbacks = new UnityEngine.Android.PermissionCallbacks();
-            callbacks.PermissionGranted += perm => Log($"{perm} granted");
-
-            var msgDenied = $"{ScenePermission} denied. Please press the 'Request Permission' button again.";
-            var msgDeniedPermanently = $"{ScenePermission} permanently denied. To enable:\n" +
-                                       $"    1. Uninstall and reinstall the app, OR\n" +
-                                       $"    2. Manually grant permission in device Settings > Privacy & Safety > App Permissions.";
-
-#if !UNITY_6000_0_OR_NEWER
-            callbacks.PermissionDenied += _ => Log(msgDenied, LogType.Error);
-            callbacks.PermissionDeniedAndDontAskAgain += _ => Log(msgDeniedPermanently, LogType.Error);
-#else
-            callbacks.PermissionDenied += perm =>
-            {
-                // ShouldShowRequestPermissionRationale returns false only if
-                // the user selected 'Never ask again' or if the user has never
-                // been asked for the permission (which can't be the case here).
-                Log(
-                    UnityEngine.Android.Permission.ShouldShowRequestPermissionRationale(perm)
-                        ? msgDenied
-                        : msgDeniedPermanently,
-                    LogType.Error);
-            };
-#endif // UNITY_6000_0_OR_NEWER
-
             if (onRequestComplete is not null)
             {
                 callbacks.PermissionGranted += _ => onRequestComplete(HasPermissions);
                 callbacks.PermissionDenied += _ => onRequestComplete(HasPermissions);
-#if !UNITY_6000_0_OR_NEWER
                 callbacks.PermissionDeniedAndDontAskAgain += _ => onRequestComplete(HasPermissions);
-#endif // UNITY_6000_0_OR_NEWER
             }
-
             UnityEngine.Android.Permission.RequestUserPermission(ScenePermission, callbacks);
-#endif // UNITY_EDITOR
+#endif
         }
 
+        // ------------- Serialized Fields -------------
 
-        //
-        // Serialized fields
+        [Tooltip("Your World Space UI Prefab containing the Bracket Image")]
+        [SerializeField] private GameObject _qrCodePrefab; 
 
-        [SerializeField]
-        QRCode _qrCodePrefab;
+        [SerializeField] private MRUK _mrukInstance;
 
-        [SerializeField]
-        QRCodeSampleUI _uiInstance;
+        // ------------- Private Fields -------------
 
-        [SerializeField]
-        MRUK _mrukInstance;
+        private int _activeCount;
+        private static QRCodeManager s_instance;
 
-        // non-serialized fields
+        // Dictionary to keep track of active QR codes and their visual instances
+        private Dictionary<MRUKTrackable, RectTransform> _activeQRVisuals = new Dictionary<MRUKTrackable, RectTransform>();
 
-        int _activeCount;
-
-        static QRCodeManager s_instance;
-
-
-        //
-        // MonoBehaviour messages
+        // ------------- MonoBehaviour Messages -------------
 
         void OnValidate()
         {
-            if (!_uiInstance && FindAnyObjectByType<QRCodeSampleUI>() is { } ui && ui.gameObject.scene == gameObject.scene)
-            {
-                _uiInstance = ui;
-            }
             if (!_mrukInstance && FindAnyObjectByType<MRUK>() is { } mruk && mruk.gameObject.scene == gameObject.scene)
             {
                 _mrukInstance = mruk;
@@ -145,7 +88,7 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
 
             if (!_mrukInstance)
             {
-                Log($"{nameof(QRCodeManager)} requires an MRUK object in the scene!", LogType.Error);
+                Debug.LogError($"{nameof(QRCodeManager)} requires an MRUK object in the scene!");
                 return;
             }
 
@@ -154,65 +97,84 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
         }
 
         void OnDestroy()
-            => s_instance = null;
+        {
+            s_instance = null;
+            if (_mrukInstance)
+            {
+                _mrukInstance.SceneSettings.TrackableAdded.RemoveListener(OnTrackableAdded);
+                _mrukInstance.SceneSettings.TrackableRemoved.RemoveListener(OnTrackableRemoved);
+            }
+        }
 
+        void Update()
+        {
+            // Iterate through all active QR codes to update their size
+            foreach (var kvp in _activeQRVisuals)
+            {
+                MRUKTrackable trackable = kvp.Key;
+                RectTransform visualRect = kvp.Value;
 
-        //
-        // UnityEvent listeners
+                if (trackable != null && visualRect != null && trackable.PlaneRect.HasValue)
+                {
+                    // 1. Get Physical Size
+                    float width = trackable.PlaneRect.Value.width;
+                    float height = trackable.PlaneRect.Value.height;
+
+                    // 2. Apply Scale to the UI
+                    // We change localScale so the Image stretches to fit the QR code exactly.
+                    // This assumes your Prefab's RectTransform defaults to a 1x1 size (or you want to multiply its size).
+                    // If you want to use Slice (9-slicing), change 'sizeDelta' instead of 'localScale'.
+                    
+                    // APPROACH A: Scaling (Behaves like the Quad - easiest for general "fit")
+                     visualRect.localScale = new Vector3(width, height, 1f);
+
+                    // APPROACH B: Sizing (Enable this instead if you use 9-Sliced Images and want crisp corners)
+                    // Note: This requires your World Space Canvas scale to be known. 
+                    // visualRect.sizeDelta = new Vector2(width / visualRect.lossyScale.x, height / visualRect.lossyScale.y);
+                }
+            }
+        }
+
+        // ------------- UnityEvent Listeners -------------
 
         public void OnTrackableAdded(MRUKTrackable trackable)
         {
-            if (trackable.TrackableType != OVRAnchor.TrackableType.QRCode)
+            if (trackable.TrackableType != OVRAnchor.TrackableType.QRCode) return;
+
+            // Instantiate your UI Prefab as a child of the Trackable
+            GameObject instance = Instantiate(_qrCodePrefab, trackable.transform);
+
+            // Ensure it's centered
+            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localRotation = Quaternion.identity;
+
+            // Try to find the RectTransform (Canvas or Image)
+            RectTransform rect = instance.GetComponent<RectTransform>();
+            if (rect == null)
             {
-                return;
+                // Fallback if the root object isn't the UI element
+                rect = instance.GetComponentInChildren<RectTransform>();
             }
 
-            var log = $"{nameof(OnTrackableAdded)}: QRCode detected!\n";
+            if (rect != null)
+            {
+                _activeQRVisuals.Add(trackable, rect);
+            }
 
-            var instance = Instantiate(_qrCodePrefab, trackable.transform);
-            var qrCode = instance.GetComponent<QRCode>();
-            qrCode.Initialize(trackable);
-            instance.GetComponent<Bounded2DVisualizer>().Initialize(trackable);
-
-            ++_activeCount;
-
-            Log($"{log}\nPayload={qrCode.PayloadText}");
+            _activeCount++;
         }
 
         public void OnTrackableRemoved(MRUKTrackable trackable)
         {
-            if (trackable.TrackableType != OVRAnchor.TrackableType.QRCode)
+            if (trackable.TrackableType != OVRAnchor.TrackableType.QRCode) return;
+
+            if (_activeQRVisuals.ContainsKey(trackable))
             {
-                return;
+                _activeQRVisuals.Remove(trackable);
             }
 
-            Log($"QRCode removed");
-
-            --_activeCount;
-
-            Destroy(trackable.gameObject);
+            _activeCount--;
+            // MRUK automatically destroys the trackable GameObject, which destroys our child instance too.
         }
-
-
-        //
-        // private impl.
-
-        static void Log(object msg, LogType type = LogType.Log)
-        {
-            if (s_instance && s_instance._uiInstance)
-            {
-                s_instance._uiInstance.Log(msg, type);
-            }
-            else
-            {
-                Debug.LogFormat(
-                    logType: type,
-                    logOptions: LogOption.None,
-                    context: s_instance,
-                    format: "{0}(noinst): {1}", nameof(QRCodeManager), msg
-                );
-            }
-        }
-
     }
 }
