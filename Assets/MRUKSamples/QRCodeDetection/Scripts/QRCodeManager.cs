@@ -3,18 +3,19 @@
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
 using System;
-using System.Collections.Generic; // Added for Dictionary
+using System.Collections.Generic;
 using UnityEngine;
+using TMPro; // Required for TextMeshProUGUI
 
 namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
 {
     [MetaCodeSample("MRUKSample-QRCodeDetection")]
     public class QRCodeManager : MonoBehaviour
     {
-        // ------------- Static Interface (Unchanged) -------------
+        // ------------- Static Interface -------------
         public const string ScenePermission = OVRPermissionsRequester.ScenePermission;
         public static bool IsSupported => MRUK.Instance.QRCodeTrackingSupported;
-        
+
         public static bool HasPermissions
 #if UNITY_EDITOR
             => true;
@@ -59,8 +60,11 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
 
         // ------------- Serialized Fields -------------
 
-        [Tooltip("Your World Space UI Prefab containing the Bracket Image")]
-        [SerializeField] private GameObject _qrCodePrefab; 
+        [Tooltip("Your World Space UI Prefab (Brackets + Text)")]
+        [SerializeField] private GameObject _qrCodePrefab;
+
+        [Tooltip("The UI Panel from the original sample to log debug messages")]
+        [SerializeField] private QRCodeSampleUI _uiInstance;
 
         [SerializeField] private MRUK _mrukInstance;
 
@@ -69,13 +73,24 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
         private int _activeCount;
         private static QRCodeManager s_instance;
 
-        // Dictionary to keep track of active QR codes and their visual instances
-        private Dictionary<MRUKTrackable, RectTransform> _activeQRVisuals = new Dictionary<MRUKTrackable, RectTransform>();
+        // Helper class to store references for each active QR code
+        private class ActiveQRData
+        {
+            public RectTransform VisualRect;
+            public TextMeshProUGUI TextComponent;
+            public MRUKTrackable Trackable;
+        }
+
+        private Dictionary<MRUKTrackable, ActiveQRData> _activeQRDict = new Dictionary<MRUKTrackable, ActiveQRData>();
 
         // ------------- MonoBehaviour Messages -------------
 
         void OnValidate()
         {
+            if (!_uiInstance && FindAnyObjectByType<QRCodeSampleUI>() is { } ui && ui.gameObject.scene == gameObject.scene)
+            {
+                _uiInstance = ui;
+            }
             if (!_mrukInstance && FindAnyObjectByType<MRUK>() is { } mruk && mruk.gameObject.scene == gameObject.scene)
             {
                 _mrukInstance = mruk;
@@ -88,7 +103,7 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
 
             if (!_mrukInstance)
             {
-                Debug.LogError($"{nameof(QRCodeManager)} requires an MRUK object in the scene!");
+                Log($"{nameof(QRCodeManager)} requires an MRUK object in the scene!", LogType.Error);
                 return;
             }
 
@@ -108,29 +123,30 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
 
         void Update()
         {
-            // Iterate through all active QR codes to update their size
-            foreach (var kvp in _activeQRVisuals)
+            // Iterate through all active QR codes
+            foreach (var kvp in _activeQRDict)
             {
-                MRUKTrackable trackable = kvp.Key;
-                RectTransform visualRect = kvp.Value;
+                ActiveQRData data = kvp.Value;
+                MRUKTrackable trackable = data.Trackable;
 
-                if (trackable != null && visualRect != null && trackable.PlaneRect.HasValue)
+                if (trackable != null && data.VisualRect != null && trackable.PlaneRect.HasValue)
                 {
                     // 1. Get Physical Size
                     float width = trackable.PlaneRect.Value.width;
                     float height = trackable.PlaneRect.Value.height;
 
-                    // 2. Apply Scale to the UI
-                    // We change localScale so the Image stretches to fit the QR code exactly.
-                    // This assumes your Prefab's RectTransform defaults to a 1x1 size (or you want to multiply its size).
-                    // If you want to use Slice (9-slicing), change 'sizeDelta' instead of 'localScale'.
-                    
-                    // APPROACH A: Scaling (Behaves like the Quad - easiest for general "fit")
-                     visualRect.localScale = new Vector3(width, height, 1f);
+                    // 2. Scale the Bracket UI to fit perfectly
+                    data.VisualRect.localScale = new Vector3(width, height, 1f);
 
-                    // APPROACH B: Sizing (Enable this instead if you use 9-Sliced Images and want crisp corners)
-                    // Note: This requires your World Space Canvas scale to be known. 
-                    // visualRect.sizeDelta = new Vector2(width / visualRect.lossyScale.x, height / visualRect.lossyScale.y);
+                    // 3. Optional: Billboard Text (Make text always face camera)
+                    if (data.TextComponent != null && Camera.main != null)
+                    {
+                        Vector3 dirToCam = data.TextComponent.transform.position - Camera.main.transform.position;
+                        if (dirToCam != Vector3.zero)
+                        {
+                            data.TextComponent.transform.rotation = Quaternion.LookRotation(dirToCam);
+                        }
+                    }
                 }
             }
         }
@@ -141,26 +157,42 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
         {
             if (trackable.TrackableType != OVRAnchor.TrackableType.QRCode) return;
 
-            // Instantiate your UI Prefab as a child of the Trackable
-            GameObject instance = Instantiate(_qrCodePrefab, trackable.transform);
+            // 1. Log Detection
+            Log($"{nameof(OnTrackableAdded)}: QRCode detected!");
 
-            // Ensure it's centered
+            // 2. Instantiate Prefab
+            GameObject instance = Instantiate(_qrCodePrefab, trackable.transform);
             instance.transform.localPosition = Vector3.zero;
             instance.transform.localRotation = Quaternion.identity;
 
-            // Try to find the RectTransform (Canvas or Image)
-            RectTransform rect = instance.GetComponent<RectTransform>();
-            if (rect == null)
+            // 3. Gather References
+            ActiveQRData newData = new ActiveQRData();
+            newData.Trackable = trackable;
+            
+            // Find Components
+            newData.VisualRect = instance.GetComponent<RectTransform>();
+            if (newData.VisualRect == null) newData.VisualRect = instance.GetComponentInChildren<RectTransform>();
+            newData.TextComponent = instance.GetComponentInChildren<TextMeshProUGUI>();
+
+            // 4. Handle Payload (Get String -> Set UI Text -> Log to Sample UI)
+            string payload = trackable.MarkerPayloadString;
+            
+            // Handle binary data if string is empty
+            if (string.IsNullOrEmpty(payload) && trackable.MarkerPayloadBytes != null)
             {
-                // Fallback if the root object isn't the UI element
-                rect = instance.GetComponentInChildren<RectTransform>();
+                 payload = $"Binary Data (Length: {trackable.MarkerPayloadBytes.Length})";
             }
 
-            if (rect != null)
+            // A) Set text on the prefab itself (like the old MarkerController)
+            if (newData.TextComponent != null)
             {
-                _activeQRVisuals.Add(trackable, rect);
+                newData.TextComponent.text = payload;
             }
 
+            // B) Log payload to the Blue Sample UI Window
+            Log($"Payload: {payload}");
+
+            _activeQRDict.Add(trackable, newData);
             _activeCount++;
         }
 
@@ -168,13 +200,35 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
         {
             if (trackable.TrackableType != OVRAnchor.TrackableType.QRCode) return;
 
-            if (_activeQRVisuals.ContainsKey(trackable))
+            Log($"QRCode removed");
+
+            if (_activeQRDict.ContainsKey(trackable))
             {
-                _activeQRVisuals.Remove(trackable);
+                _activeQRDict.Remove(trackable);
             }
 
             _activeCount--;
-            // MRUK automatically destroys the trackable GameObject, which destroys our child instance too.
+            Destroy(trackable.gameObject);
+        }
+
+        // ------------- Private Logging Impl (Restored) -------------
+
+        static void Log(object msg, LogType type = LogType.Log)
+        {
+            if (s_instance && s_instance._uiInstance)
+            {
+                s_instance._uiInstance.Log(msg, type);
+            }
+            else
+            {
+                // Fallback to Unity Console if UI is missing
+                Debug.LogFormat(
+                    logType: type,
+                    logOptions: LogOption.None,
+                    context: s_instance,
+                    format: "{0}(noinst): {1}", nameof(QRCodeManager), msg
+                );
+            }
         }
     }
 }
