@@ -6925,7 +6925,7 @@ MonoBehaviour:
   <RoomRemovedEvent>k__BackingField:
     m_PersistentCalls:
       m_Calls: []
-  EnableWorldLock: 1
+  EnableWorldLock: 0
   TrackingSpaceOffset:
     e00: 1
     e01: 0
@@ -6944,7 +6944,7 @@ MonoBehaviour:
     e32: 0
     e33: 1
   SceneSettings:
-    DataSource: 0
+    DataSource: 1
     RoomIndex: -1
     RoomPrefabs: []
     SceneJsons: []

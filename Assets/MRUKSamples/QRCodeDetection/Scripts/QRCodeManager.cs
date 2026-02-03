@@ -106,6 +106,7 @@ namespace Meta.XR.MRUtilityKitSamples.QRCodeDetection
                 Log($"{nameof(QRCodeManager)} requires an MRUK object in the scene!", LogType.Error);
                 return;
             }
+            _mrukInstance.ClearScene();
 
             _mrukInstance.SceneSettings.TrackableAdded.AddListener(OnTrackableAdded);
             _mrukInstance.SceneSettings.TrackableRemoved.AddListener(OnTrackableRemoved);
