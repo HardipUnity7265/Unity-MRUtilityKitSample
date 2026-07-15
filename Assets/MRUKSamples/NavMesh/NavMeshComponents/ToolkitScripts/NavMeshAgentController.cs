@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
 using Meta.XR.Samples;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -46,6 +47,9 @@ namespace MRUtilityKitSample.NavMesh
                 Destroy(PositionIndicatorInstance);
             }
             PositionIndicatorInstance = Instantiate(_positionIndicator, SetNewDestination(), Quaternion.identity);
+            var pos = PositionIndicatorInstance.transform.position;
+            pos.y = MRUK.Instance.GetCurrentRoom().GetRoomBounds().min.y;
+            PositionIndicatorInstance.transform.position = pos;
         }
 
         public Vector3 SetNewDestination()

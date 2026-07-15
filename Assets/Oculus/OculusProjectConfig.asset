@@ -16,16 +16,14 @@ MonoBehaviour:
   allowOptional3DofHeadTracking: 0
   handTrackingSupport: 0
   handTrackingFrequency: 2
-  handTrackingVersion: 2
   anchorSupport: 1
-  sharedAnchorSupport: 0
+  sharedAnchorSupport: 2
   renderModelSupport: 0
   trackedKeyboardSupport: 0
   bodyTrackingSupport: 0
   faceTrackingSupport: 0
   eyeTrackingSupport: 0
-  virtualKeyboardSupport: 0
-  colocationSessionSupport: 0
+  colocationSessionSupport: 2
   sceneSupport: 2
   boundaryVisibilitySupport: 1
   disableBackups: 1
@@ -37,8 +35,10 @@ MonoBehaviour:
   skipUnneededShaders: 0
   enableIL2CPPLTO: 0
   removeGradleManifest: 1
+  metaXrFeaturePromptDeclined: 0
+  useOpenXRPromptDeclined: 0
   focusAware: 1
-  requiresSystemKeyboard: 0
+  requiresSystemKeyboard: 1
   experimentalFeaturesEnabled: 1
   insightPassthroughEnabled: 0
   _insightPassthroughSupport: 2

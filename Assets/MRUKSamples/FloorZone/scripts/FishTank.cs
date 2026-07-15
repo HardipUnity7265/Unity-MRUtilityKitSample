@@ -67,7 +67,7 @@ namespace MRUtilityKitSample.FindFloorZone
             }
 
             var roomBounds = _cachedRoom.GetRoomBounds();
-            _roomCenter = new Vector3(roomBounds.center.x, 0, roomBounds.center.z);
+            _roomCenter = new Vector3(roomBounds.center.x, roomBounds.min.y, roomBounds.center.z);
             _roomSize = new Vector3(roomBounds.size.x, 1, roomBounds.size.z);
 
             var startPosition = _thisTransform.position;
@@ -300,7 +300,7 @@ namespace MRUtilityKitSample.FindFloorZone
         {
             await Task.Delay((int)(POND_FITTING_DELAY * 1000), cancellationToken);
 
-            var center = new Vector3(bounds.center.x, 0, bounds.center.z);
+            var center = new Vector3(bounds.center.x, _cachedRoom.GetRoomBounds().min.y, bounds.center.z);
             var fishTankNewSize = new Vector3(bounds.size.x, 1, bounds.size.z);
 
             var startPosition = _thisTransform.position;

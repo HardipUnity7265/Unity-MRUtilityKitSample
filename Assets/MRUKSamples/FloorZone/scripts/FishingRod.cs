@@ -26,6 +26,8 @@ namespace MRUtilityKitSample.FindFloorZone
 
         [SerializeField] private Transform _stringRoll;
         [SerializeField] private LineRenderer _lineRenderer;
+        [SerializeField] private float _maxStringLength = 10f;
+        [SerializeField] private float _buttonReelSpeed = 0.4f;
 
         [SerializeField] private float _tension = 0.1f;
         public Fish _fishHooked;
@@ -89,12 +91,13 @@ namespace MRUtilityKitSample.FindFloorZone
             _isFloaterInWater = false;
             _pullingOutTimer = _pullingOutTimerStart;
         }
-
-        private void Update()
+        private void LateUpdate()
         {
             _lineRenderer.SetPosition(0, _rodTipTransform.position);
             _lineRenderer.SetPosition(1, _activeFloater.transform.position + _activeFloater.transform.up * 0.05f);
-
+        }
+        private void Update()
+        {
             ControllerRodAdjustment();
             PullingOutTimerHandler();
             _configurableJoint.anchor = Vector3.up * _stringGiven;
@@ -156,12 +159,12 @@ namespace MRUtilityKitSample.FindFloorZone
             // Debug controls
             if (Input.GetKey(KeyCode.UpArrow) || OVRInput.Get(OVRInput.RawButton.Y))
             {
-                StringAdjustment(0.2f);
+                StringAdjustment(_buttonReelSpeed);
             }
 
             if (Input.GetKey(KeyCode.DownArrow) || OVRInput.Get(OVRInput.RawButton.X))
             {
-                StringAdjustment(-0.2f);
+                StringAdjustment(-_buttonReelSpeed);
             }
         }
 
@@ -366,6 +369,7 @@ namespace MRUtilityKitSample.FindFloorZone
         private void StringAdjustment(float stringAdjust)
         {
             _stringGiven += stringAdjust * Time.deltaTime;
+            _stringGiven = Mathf.Clamp(_stringGiven, 0.1f, _maxStringLength);
             _stringRoll.transform.Rotate(Vector3.right, stringAdjust * 5000 * Time.deltaTime);
         }
 
@@ -399,6 +403,7 @@ namespace MRUtilityKitSample.FindFloorZone
                     }
 
                     _stringGiven += deltaAngle * Time.deltaTime * -.1f;
+                    _stringGiven = Mathf.Clamp(_stringGiven, 0.1f, _maxStringLength);
                     _stringRoll.transform.localRotation = Quaternion.Euler(Vector3.right * -currentAngle);
                 }
 

@@ -13,8 +13,8 @@ namespace MRUtilityKitSample.FindFloorZone
     [MetaCodeSample("MRUK-FindFloorZone")]
     public class SliderUI : MonoBehaviour
     {
-        private const float UPDATE_FREQUENCY = 0.016f; // ~60 FPS update rate
-        private const float COLOR_CHANGE_THRESHOLD = 0.01f; // Only update color if change is significant
+        private const float UpdateFrequency = 0.016f; // ~60 FPS update rate
+        private const float ColorChangeThreshold = 0.01f; // Only update color if change is significant
 
         [SerializeField] private Vector3 Offset = Vector3.zero;
 
@@ -51,7 +51,7 @@ namespace MRUtilityKitSample.FindFloorZone
         {
             // Reduce update frequency for better performance
             _updateTimer += Time.deltaTime;
-            if (_updateTimer >= UPDATE_FREQUENCY)
+            if (_updateTimer >= UpdateFrequency)
             {
                 UpdatePosition();
                 UpdateColor();
@@ -73,7 +73,7 @@ namespace MRUtilityKitSample.FindFloorZone
         {
             // Only update color if slider value changed significantly
             var currentSliderValue = _slider.value;
-            if (!(Mathf.Abs(currentSliderValue - _lastSliderValue) > COLOR_CHANGE_THRESHOLD))
+            if (!(Mathf.Abs(currentSliderValue - _lastSliderValue) > ColorChangeThreshold))
             {
                 return;
             }

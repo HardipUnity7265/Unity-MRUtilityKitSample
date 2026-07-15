@@ -8,13 +8,17 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
 {
     [MetaCodeSample("MRUKSample-StartScene")]
     public class UICursor : OVRCursor
-
     {
         private Vector3 _forward;
         private Vector3 _endPoint;
         private Vector3 _normal;
         private bool _hit;
 
+        /// <summary>
+        /// Overriding the <see cref="SetCursorRay"/> from <see cref="OVRCursor"/>, setting the cursor ray
+        /// direction based on the transform's forward direction.
+        /// </summary>
+        /// <param name="t"><see cref="Transform"/> used to determine the cursor ray direction</param>
         public override void SetCursorRay(Transform t)
         {
             _forward = t.forward;

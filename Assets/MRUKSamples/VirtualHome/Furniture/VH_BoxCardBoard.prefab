@@ -171,8 +171,8 @@ MonoBehaviour:
   BorderYNegative: 0.01
   BorderYPositive: 0.554
   ScalingZ: 1
-  BorderZNegative: 0.01
-  BorderZPositive: 0.01
+  BorderZNegative: 0.401
+  BorderZPositive: 0.401
   StretchCenter: 0
   UpdateInPlayMode: 1
   OriginalMesh: {fileID: -5217546879040905463, guid: 2451b5a68f70edd4fb8ad1d861cf3cab, type: 3}

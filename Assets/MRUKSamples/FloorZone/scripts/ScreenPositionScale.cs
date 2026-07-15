@@ -14,9 +14,9 @@ namespace MRUtilityKitSample.FindFloorZone
     [MetaCodeSample("MRUK-FindFloorZone")]
     public class ScreenPositionScale : MonoBehaviour
     {
-        private const float UPDATE_FREQUENCY = 0.1f; // Update every 100ms instead of every frame
-        private const float SCALE_CHANGE_THRESHOLD = 0.001f; // Only update if scale changed significantly
-        private const string RESOLUTION_MULTIPLIER_PROPERTY = "_ResoltionMultiplier";
+        private const float UpdateFrequency = 0.1f; // Update every 100ms instead of every frame
+        private const float ScaleChangeThreshold = 0.001f; // Only update if scale changed significantly
+        private const string ResolutionMultiplierProperty = "_ResolutionMultiplier";
 
         private Material _material;
         private float _lastRenderViewportScale = -1f;
@@ -26,7 +26,7 @@ namespace MRUtilityKitSample.FindFloorZone
         private void Start()
         {
             _material = GetComponent<Renderer>().material;
-            _resolutionMultiplierPropertyId = Shader.PropertyToID(RESOLUTION_MULTIPLIER_PROPERTY);
+            _resolutionMultiplierPropertyId = Shader.PropertyToID(ResolutionMultiplierProperty);
 
             // Set initial value
             UpdateResolutionMultiplier();
@@ -35,7 +35,7 @@ namespace MRUtilityKitSample.FindFloorZone
         private void Update()
         {
             _updateTimer += Time.deltaTime;
-            if (!(_updateTimer >= UPDATE_FREQUENCY))
+            if (!(_updateTimer >= UpdateFrequency))
             {
                 return;
             }
@@ -49,7 +49,7 @@ namespace MRUtilityKitSample.FindFloorZone
             var currentScale = XRSettings.renderViewportScale;
 
             // Only update material if the scale changed significantly
-            if (!(Mathf.Abs(currentScale - _lastRenderViewportScale) > SCALE_CHANGE_THRESHOLD))
+            if (!(Mathf.Abs(currentScale - _lastRenderViewportScale) > ScaleChangeThreshold))
             {
                 return;
             }

@@ -8,12 +8,20 @@ using UnityEngine;
 
 namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
 {
+    /// <summary>
+    /// Visualizes a 3D bounded volume from an MRUKTrackable using line renderers and transforms.
+    /// This component renders the wireframe bounds of a trackable object and manages passthrough mode visualization.
+    /// </summary>
     [MetaCodeSample("MRUKSample-KeyboardTracker")]
     public class Bounded3DVisualizer : MonoBehaviour
     {
         [SerializeField]
         LineRenderer _lineRenderer;
 
+        /// <summary>
+        /// Gets the transform to which the trackable's detected position and scale should be applied.
+        /// This transform will be scaled to match the size of the bounded volume.
+        /// </summary>
         [field: SerializeField]
         [Tooltip("The transform to which the keyboard's detected position and scale should be applied.")]
         public Transform BoxTransform
@@ -38,6 +46,16 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
             }
         }
 
+        /// <summary>
+        /// Initializes the visualizer with a trackable object and skybox reference.
+        /// Sets up the line renderer to display the wireframe bounds and configures the box transform scale.
+        /// </summary>
+        /// <param name="trackable">The MRUKTrackable object containing the volume bounds to visualize.</param>
+        /// <param name="skybox">The skybox GameObject used to determine passthrough mode state.</param>
+        /// <remarks>
+        /// If the trackable has no VolumeBounds component, the initialization will be skipped and logged.
+        /// The line renderer will be configured to draw a wireframe representation of the bounding box.
+        /// </remarks>
         public void Initialize(MRUKTrackable trackable, GameObject skybox)
         {
             if (trackable == null)
@@ -85,6 +103,11 @@ namespace Meta.XR.MRUtilityKitSamples.KeyboardTracker
             }
         }
 
+        /// <summary>
+        /// Sets the passthrough mode for the visualizer, controlling the visibility of visual elements.
+        /// In full passthrough mode, the box transform is hidden and axes are shown.
+        /// </summary>
+        /// <param name="isFullPassthrough">True to enable full passthrough mode (hide box, show axes), false otherwise.</param>
         public void SetPassthroughMode(bool isFullPassthrough)
         {
             if (BoxTransform)

@@ -9,27 +9,62 @@ namespace Meta.XR.MRUtilityKitSamples.HiFiScene
     [MetaCodeSample("MRUKSample-HiFiScene")]
     public class RoomMesh : MonoBehaviour
     {
-        // Start is called before the first frame update
+        /// <summary>
+        /// Initializes the RoomMesh component by subscribing to the MRUK scene loaded event.
+        /// This method is called before the first frame update and sets up the event listener
+        /// that will trigger mesh creation when a scene is loaded from the device.
+        /// </summary>
         void Start()
         {
-            MRUK.Instance.SceneLoadedEvent.AddListener(SceneLoadedEvent);
+            if (MRUK.Instance)
+            {
+                MRUK.Instance.SceneLoadedEvent.AddListener(SceneLoadedEvent);
+            }
         }
 
         /// <summary>
-        /// Creates a Unity Mesh from the RoomMeshData property.
-        /// Each face in the room mesh will be created as a separate submesh.
-        /// This property will be null if EnableHighFidelityScene is false.
+        /// We need to unsubscribe to the scene loaded event once this objects gets destroyed.
         /// </summary>
-        /// <returns>A Unity Mesh created from the room mesh data, or null if RoomMeshData is not available.</returns>
-        private Mesh CreateMeshFromRoomMeshData(MRUKRoom.RoomMesh roomMesh)
+        private void OnDestroy()
         {
-            Mesh mesh = new Mesh();
+            if (MRUK.Instance)
+            {
+                MRUK.Instance.SceneLoadedEvent.RemoveListener(SceneLoadedEvent);
+            }
+        }
 
-            // Set vertices
-            mesh.vertices = roomMesh.Vertices.ToArray();
+        /// <summary>
+        /// Creates a Unity Mesh from the provided room mesh data.
+        /// Each face in the room mesh will be created as a separate submesh, allowing for
+        /// different materials to be applied to different semantic surfaces (walls, floor, ceiling, etc.).
+        /// The mesh vertices are set from the room mesh vertices, and triangles are organized
+        /// into submeshes based on the face data.
+        /// </summary>
+        /// <param name="roomMesh">The room mesh data containing vertices and face information to convert into a Unity mesh.</param>
+        /// <returns>A Unity Mesh created from the room mesh data with separate submeshes for each face.</returns>
+        private static Mesh CreateMeshFromRoomMeshData(MRUKRoom.RoomMesh roomMesh)
+        {
+            // Find the average position of all vertices
+            Vector3 center = Vector3.zero;
+            foreach (var vertex in roomMesh.Vertices)
+            {
+                center += vertex;
+            }
+            center /= roomMesh.Vertices.Count;
 
-            // Set submesh count
-            mesh.subMeshCount = roomMesh.Faces.Count;
+            Vector3[] scaledVertices = new Vector3[roomMesh.Vertices.Count];
+            for (int i = 0; i < roomMesh.Vertices.Count; i++)
+            {
+                // Scale each vertex relative to the center
+                const float scaleFactor = 1.001f;
+                scaledVertices[i] = center + (roomMesh.Vertices[i] - center) * scaleFactor;
+            }
+
+            Mesh mesh = new Mesh
+            {
+                vertices = scaledVertices,
+                subMeshCount = roomMesh.Faces.Count
+            };
 
             // Create submeshes for each face
             for (int i = 0; i < roomMesh.Faces.Count; i++)
@@ -41,6 +76,13 @@ namespace Meta.XR.MRUtilityKitSamples.HiFiScene
             return mesh;
         }
 
+        /// <summary>
+        /// Event handler called when a scene is loaded from the device.
+        /// This method retrieves the current room's mesh data and creates a visual representation
+        /// by generating a Unity mesh with materials colored according to semantic labels.
+        /// It automatically adds MeshFilter and MeshRenderer components if they don't exist,
+        /// and assigns different colors to different surface types (floor, walls, ceiling, etc.).
+        /// </summary>
         private void SceneLoadedEvent()
         {
             var room = MRUK.Instance.GetCurrentRoom();
@@ -70,7 +112,6 @@ namespace Meta.XR.MRUtilityKitSamples.HiFiScene
                     int submeshCount = mesh.subMeshCount;
                     Material[] materials = new Material[submeshCount];
 
-                    var shader = Shader.Find("Universal Render Pipeline/Lit");
 
                     // Create a material for each submesh with different colors to distinguish them
                     for (int i = 0; i < submeshCount; i++)
@@ -111,6 +152,7 @@ namespace Meta.XR.MRUtilityKitSamples.HiFiScene
                         }
 
                         // Create the material
+                        var shader = Shader.Find("Universal Render Pipeline/Lit");
                         materials[i] = new Material(shader)
                         {
                             color = color

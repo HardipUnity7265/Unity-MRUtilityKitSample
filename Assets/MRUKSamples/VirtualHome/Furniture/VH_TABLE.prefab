@@ -175,10 +175,10 @@ MonoBehaviour:
   BorderYNegative: 0.213
   BorderYPositive: 0.52
   ScalingZ: 0
-  BorderZNegative: 0.011
+  BorderZNegative: 0.46
   BorderZPositive: 0.554
   StretchCenter: 0
-  UpdateInPlayMode: 0
+  UpdateInPlayMode: 1
   OriginalMesh: {fileID: -6692290496178104961, guid: 5ac31a2102c44454a90931093cbe3cac, type: 3}
 --- !u!4 &4444205343359086666 stripped
 Transform:

@@ -14,6 +14,9 @@ namespace MRUtilityKitSample.NavMesh
         [SerializeField] private Transform _revealingTarget;
         private EffectMesh _effectMesh;
 
+        /// <summary>
+        /// Spawns wire cube visualizations on all bounding boxes in the scene.
+        /// </summary>
         public void SpawnWireCubeOnBoundingBoxes()
         {
             StartCoroutine(SpawnWireCubeOnBoundingBoxesCoroutine());

@@ -142,9 +142,9 @@ MonoBehaviour:
   ScalingX: 1
   BorderXNegative: 0.01
   BorderXPositive: 0.01
-  ScalingY: 2
-  BorderYNegative: 0.01
-  BorderYPositive: 1
+  ScalingY: 1
+  BorderYNegative: 0.141
+  BorderYPositive: 0.103
   ScalingZ: 0
   BorderZNegative: 0.611
   BorderZPositive: 0.01

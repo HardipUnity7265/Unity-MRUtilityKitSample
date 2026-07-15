@@ -32,7 +32,6 @@ Transform:
   m_LocalScale: {x: 1.19, y: 1.06, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1711482450753465477}
   - {fileID: 9039041867690728835}
   m_Father: {fileID: 793305811318381553}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -138,12 +137,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3485162515917518265}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0272, y: 1.0479, z: 0.0483}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.032368, y: 1.1107739, z: 0.0483}
+  m_LocalScale: {x: 1.19, y: 1.06, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2311835657227861167}
+  m_Father: {fileID: 793305811318381553}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2058502952541123649
 MeshFilter:
@@ -207,9 +206,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7bab391bf3a4ed409626a4aa71baa26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetGameObject: {fileID: 3125105497675769365}
-  _parentToScaleCompensate: {fileID: 793305811318381553}
-  _vertexIndex: 6175
+  _target: {fileID: 2311835657227861167}
+  _indexID: 6175
 --- !u!1 &8521196154254356203
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,6 +269,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3209310886876631172}
+  - {fileID: 1711482450753465477}
   - {fileID: 2311835657227861167}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

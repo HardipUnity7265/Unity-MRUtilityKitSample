@@ -10,9 +10,15 @@ using UnityEngine.UI;
 
 namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
 {
+    /// <summary>
+    /// A UI panel for debugging and controlling passthrough relighting settings.
+    /// </summary>
     [MetaCodeSample("MRUKSample-PassthroughRelighting")]
     public class DebugPanel : MonoBehaviour
     {
+        private const string HighlightAttenuationShaderPropertyName = "_HighLightAttenuation";
+        private const string HighlightOpaquenessShaderPropertyName = "_HighlightOpacity";
+
         [SerializeField] private TMP_Dropdown _shadowDropDown;
         [SerializeField] private Toggle _highlightsToggle;
         [SerializeField] private TMP_Dropdown _geometryDropDown;
@@ -21,16 +27,13 @@ namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
         [SerializeField] private Slider _passthroughBrightnessSlider;
         [SerializeField] private Slider _lightBlendFactor;
         [SerializeField] private Renderer _oppyRenderer;
-        [SerializeField] private GameObject _blobShadowProjector;
         [SerializeField] private Material _sceneMaterial;
         [SerializeField] private OppyCharacterController _oppyController;
         [SerializeField] private OppyLightGlow _oppyLightGlow;
         [SerializeField] private OVRPassthroughLayer _passthroughLayer;
         [SerializeField] private bool _highlights;
 
-        private EffectMesh[] effectMeshes;
-        private const string HighLightAttenuationShaderPropertyName = "_HighLightAttenuation";
-        private const string HighLightOpaquenessShaderPropertyName = "_HighlightOpacity";
+        private EffectMesh[] _effectMeshes;
 
         private void Awake()
         {
@@ -44,17 +47,17 @@ namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
                 {
                     if (_highlights)
                     {
-                        _sceneMaterial.SetFloat(HighLightAttenuationShaderPropertyName, val);
+                        _sceneMaterial.SetFloat(HighlightAttenuationShaderPropertyName, val);
                     }
                 }
             );
             _lightBlendFactor.onValueChanged.AddListener(
-                (val) => { _sceneMaterial.SetFloat(HighLightOpaquenessShaderPropertyName, val); }
+                (val) => { _sceneMaterial.SetFloat(HighlightOpaquenessShaderPropertyName, val); }
             );
             _passthroughBrightnessSlider.onValueChanged.AddListener(
                 (brightness) => { _passthroughLayer.SetBrightnessContrastSaturation(brightness); }
             );
-            effectMeshes = FindObjectsByType<EffectMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            _effectMeshes = FindObjectsByType<EffectMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         }
 
         private void Start()
@@ -76,6 +79,9 @@ namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
             }
         }
 
+        /// <summary>
+        /// Enables or disables the geometry dropdown based on whether a global mesh exists.
+        /// </summary>
         public void ToggleGeometryDropDown()
         {
             bool globalMeshExists = MRUK.Instance && MRUK.Instance.GetCurrentRoom() &&
@@ -87,7 +93,7 @@ namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
         {
             if (optionSelected == 1)
             {
-                foreach (var effectMesh in effectMeshes)
+                foreach (var effectMesh in _effectMeshes)
                 {
                     if ((effectMesh.Labels & MRUKAnchor.SceneLabels.GLOBAL_MESH) == 0)
                     {
@@ -101,7 +107,7 @@ namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
             }
             else
             {
-                foreach (var effectMesh in effectMeshes)
+                foreach (var effectMesh in _effectMeshes)
                 {
                     if ((effectMesh.Labels & MRUKAnchor.SceneLabels.GLOBAL_MESH) != 0)
                     {
@@ -120,11 +126,11 @@ namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
         private void HighlightSettingsToggled(bool highlightsOn)
         {
             _highlights = highlightsOn;
-            _sceneMaterial.SetFloat(HighLightAttenuationShaderPropertyName, highlightsOn ? 1 : 0);
+            _sceneMaterial.SetFloat(HighlightAttenuationShaderPropertyName, highlightsOn ? 1 : 0);
             _oppyLightGlow.SetGlowActive(highlightsOn);
             if (highlightsOn)
             {
-                _sceneMaterial.SetFloat(HighLightAttenuationShaderPropertyName, _lightIntensitySlider.value);
+                _sceneMaterial.SetFloat(HighlightAttenuationShaderPropertyName, _lightIntensitySlider.value);
             }
         }
 
@@ -133,12 +139,10 @@ namespace Meta.XR.MRUtilityKitSamples.PassthroughRelighting
             if (dynamicShadow == 0)
             {
                 _oppyRenderer.shadowCastingMode = ShadowCastingMode.On;
-                _blobShadowProjector.SetActive(false);
             }
             else
             {
                 _oppyRenderer.shadowCastingMode = ShadowCastingMode.Off;
-                _blobShadowProjector.SetActive(true);
             }
         }
     }

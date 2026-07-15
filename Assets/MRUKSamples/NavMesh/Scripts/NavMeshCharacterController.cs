@@ -14,8 +14,8 @@ namespace MRUtilityKitSample.NavMesh
         [SerializeField] private Transform _headFocusTarget;
         [SerializeField] private Transform _headBone;
 
-        private float lookX; // Horizontal look value (-1 to 1)
-        private float lookY; // Vertical look value (-1 to 1)
+        private float _lookX; // Horizontal look value (-1 to 1)
+        private float _lookY; // Vertical look value (-1 to 1)
         private Animator _animator;
         private NavMeshAgent _agent;
         private GameObject _objectEaten;
@@ -49,7 +49,11 @@ namespace MRUtilityKitSample.NavMesh
             _objectEaten = other.transform.gameObject;
         }
 
-        public void PickUp() //called by animation event
+        /// <summary>
+        /// Picks up the eaten object and attaches it to the object socket.
+        /// Called by animation event.
+        /// </summary>
+        public void PickUp()
         {
             if (_objectEaten == null)
             {
@@ -59,7 +63,11 @@ namespace MRUtilityKitSample.NavMesh
             _objectEaten.transform.localPosition = Vector3.zero;
         }
 
-        private void EatObject() //called by animation event
+        /// <summary>
+        /// Destroys the eaten object and spawns particle effects.
+        /// Called by animation event.
+        /// </summary>
+        public void EatObject()
         {
             if (_objectEaten != null)
             {
@@ -69,6 +77,9 @@ namespace MRUtilityKitSample.NavMesh
             }
         }
 
+        /// <summary>
+        /// Updates the character's head rotation to look at the focus target.
+        /// </summary>
         private void HeadLookAt()
         {
             if (_headFocusTarget == null)
@@ -95,10 +106,10 @@ namespace MRUtilityKitSample.NavMesh
             // Calculate lookX and lookY values from the local direction
             // lookX is based on the x component (left/right)
             // lookY is based on the y component (up/down)
-            lookX = Mathf.Lerp(lookX, Mathf.Clamp(localDirection.x, -1f, 1f), Time.deltaTime * 20);
-            lookY = Mathf.Lerp(lookY, Mathf.Clamp(localDirection.y, -1f, 1f), Time.deltaTime * 20);
-            _animator.SetFloat("LookX", lookX);
-            _animator.SetFloat("LookY", lookY);
+            _lookX = Mathf.Lerp(_lookX, Mathf.Clamp(localDirection.x, -1f, 1f), Time.deltaTime * 20);
+            _lookY = Mathf.Lerp(_lookY, Mathf.Clamp(localDirection.y, -1f, 1f), Time.deltaTime * 20);
+            _animator.SetFloat("LookX", _lookX);
+            _animator.SetFloat("LookY", _lookY);
         }
     }
 }

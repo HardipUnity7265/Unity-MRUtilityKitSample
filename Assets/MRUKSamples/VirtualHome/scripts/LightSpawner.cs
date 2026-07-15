@@ -13,6 +13,7 @@ namespace Meta.XR.MRUtilityKitSamples.VirtualHome
         /// Helper method to tweak the point light's range so that it matches the room's bounds
         /// before instantiating it.
         /// </summary>
+        /// <param name="anchorInfo">The anchor information used to spawn and configure the prefab.</param>
         protected override void SpawnPrefab(MRUKAnchor anchorInfo)
         {
             base.SpawnPrefab(anchorInfo);
@@ -20,13 +21,18 @@ namespace Meta.XR.MRUtilityKitSamples.VirtualHome
             // Adjust the range of the point light
             var roomBoundsSize = anchorInfo.Room.GetRoomBounds().size;
             var maxExtent = Mathf.Max(roomBoundsSize.x, roomBoundsSize.y, roomBoundsSize.z);
-            if (gameObject == null || (gameObject != null && gameObject.GetComponentInChildren<Light>() == null))
+            var lightComponent = gameObject?.GetComponentInChildren<Light>();
+            if (gameObject == null)
+            {
+                return;
+            }
+            if (lightComponent == null)
             {
                 Debug.LogWarning("No light source was found on the prefab to be spawned or its children");
                 return;
             }
 
-            gameObject.GetComponentInChildren<Light>().range = maxExtent;
+            lightComponent.range = maxExtent;
         }
     }
 }

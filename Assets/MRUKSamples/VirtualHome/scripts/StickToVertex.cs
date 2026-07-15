@@ -1,88 +1,52 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
-public class StickToVertex : MonoBehaviour
+namespace Meta.XR.MRUtilityKitSamples.VirtualHome
 {
-    [SerializeField] GameObject _targetGameObject;
-    [SerializeField] Transform _parentToScaleCompensate;
-    [SerializeField] int _vertexIndex;
-
-    private MeshFilter _meshFilter;
-    private Vector3[] _vertices;
-    private Vector3 _cachedParentScale = Vector3.zero;
-    private Vector3 _cachedInverseScale;
-    private Transform _targetTransform;
-    private bool _isInitialized = false;
-
-    void Start()
+    [MetaCodeSample("MRUKSample-VirtualHome")]
+    public class StickToVertex : MonoBehaviour
     {
-        InitializeCache();
-    }
+        [SerializeField] private Transform _target;
+        [SerializeField] private int _indexID;
 
-    void InitializeCache()
-    {
-        if (_targetGameObject == null)
+        private void Update()
         {
-            Debug.LogError($"StickToVertex on {gameObject.name}: Target GameObject is null!");
-            enabled = false;
-            return;
-        }
+            if (_target == null)
+            {
+                return;
+            }
 
-        _meshFilter = _targetGameObject.GetComponent<MeshFilter>();
-        if (_meshFilter == null || _meshFilter.mesh == null)
-        {
-            Debug.LogError($"StickToVertex on {gameObject.name}: Target GameObject missing MeshFilter or mesh!");
-            enabled = false;
-            return;
-        }
+            var meshFilter = _target.GetComponent<MeshFilter>();
+            if (meshFilter == null || meshFilter.sharedMesh == null)
+            {
+                return;
+            }
 
-        _vertices = _meshFilter.mesh.vertices;
-        if (_vertexIndex < 0 || _vertexIndex >= _vertices.Length)
-        {
-            Debug.LogError($"StickToVertex on {gameObject.name}: Vertex index {_vertexIndex} out of bounds (mesh has {_vertices.Length} vertices)!");
-            enabled = false;
-            return;
-        }
+            var mesh = meshFilter.sharedMesh;
+            if (_indexID < 0 || _indexID >= mesh.vertexCount)
+            {
+                return;
+            }
 
-        _targetTransform = _targetGameObject.transform;
+            var localVertexPosition = mesh.vertices[_indexID];
+            var worldVertexPosition = _target.TransformPoint(localVertexPosition);
 
-        if (_parentToScaleCompensate != null)
-        {
-            UpdateInverseScale();
-        }
+            transform.position = worldVertexPosition;
 
-        _isInitialized = true;
-    }
-
-    void UpdateInverseScale()
-    {
-        Vector3 currentScale = _parentToScaleCompensate.localScale;
-        if (_cachedParentScale != currentScale)
-        {
-            _cachedParentScale = currentScale;
-            _cachedInverseScale = new Vector3(
-                currentScale.x != 0 ? 1f / currentScale.x : 1f,
-                currentScale.y != 0 ? 1f / currentScale.y : 1f,
-                currentScale.z != 0 ? 1f / currentScale.z : 1f
-            );
+            if (transform.parent != null)
+            {
+                var parentScale = transform.parent.lossyScale;
+                if (parentScale.x != 0 && parentScale.y != 0 && parentScale.z != 0)
+                {
+                    transform.localScale = new Vector3(1f / parentScale.x, 1f / parentScale.y, 1f / parentScale.z);
+                }
+            }
+            else
+            {
+                transform.localScale = Vector3.one;
+            }
         }
     }
-
-    void Update()
-    {
-        if (!_isInitialized)
-            return;
-
-        var localVertexPosition = _vertices[_vertexIndex];
-        var worldVertexPosition = _targetTransform.TransformPoint(localVertexPosition);
-        transform.position = worldVertexPosition;
-
-        if (_parentToScaleCompensate != null)
-        {
-            UpdateInverseScale();
-            transform.localScale = _cachedInverseScale;
-        }
-    }
-
 }

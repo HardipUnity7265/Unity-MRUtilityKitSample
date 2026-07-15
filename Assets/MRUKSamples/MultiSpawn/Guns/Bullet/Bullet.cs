@@ -7,19 +7,28 @@ using UnityEngine.UI;
 
 namespace Meta.XR.MRUtilityKitSamples.FindMultiSpawn
 {
+    /// <summary>
+    /// A bullet projectile that moves forward and handles collisions with targets and surfaces.
+    /// </summary>
     [MetaCodeSample("MRUKSample-FindMultiSpawn")]
     public class Bullet : MonoBehaviour
     {
+        /// <summary>
+        /// The speed at which the bullet travels in units per second.
+        /// </summary>
         public float Speed = 30f;
         [SerializeField] private float maxDistance = 100f;
         [SerializeField] private LayerMask collisionLayers = ~0; // All layers by default
         [SerializeField] private GameObject vfxTargetHit;
         [SerializeField] private GameObject vfxSurfaceHit;
         [SerializeField] private GameObject missScoreLabel;
-        private float distanceTraveled;
-        private TrailRenderer trailRenderer;
+        private float _distanceTraveled;
+        private TrailRenderer _trailRenderer;
         private MultiSpawnMenu _multiSpawnMenu;
         [Header("Audio")]
+        /// <summary>
+        /// The audio source used to play gun sound effects.
+        /// </summary>
         [HideInInspector] public AudioSource GunAudioSource;
         [SerializeField] private AudioClip _wallHitSound;
         [SerializeField] private AudioClip[] _targetHitSound;
@@ -27,11 +36,11 @@ namespace Meta.XR.MRUtilityKitSamples.FindMultiSpawn
 
         private void Start()
         {
-            trailRenderer = GetComponent<TrailRenderer>();
+            _trailRenderer = GetComponent<TrailRenderer>();
 
             // Add self-destruct component
             var destroyer = gameObject.AddComponent<DestroyAfterSeconds>();
-            destroyer.Seconds = 3f; // Destroy after 5 seconds if no collision occurs
+            destroyer.Seconds = 3f; // Destroy after 3 seconds if no collision occurs
             _multiSpawnMenu = FindAnyObjectByType<MultiSpawnMenu>();
         }
 
@@ -54,10 +63,10 @@ namespace Meta.XR.MRUtilityKitSamples.FindMultiSpawn
 
             // Move forward if no collision
             transform.position += movement;
-            distanceTraveled += moveDistance;
+            _distanceTraveled += moveDistance;
 
             // Check if maximum distance has been reached
-            if (distanceTraveled >= maxDistance)
+            if (_distanceTraveled >= maxDistance)
             {
                 Destroy(gameObject);
             }
@@ -104,16 +113,16 @@ namespace Meta.XR.MRUtilityKitSamples.FindMultiSpawn
             }
 
             // Stop the trail from growing
-            if (trailRenderer != null)
+            if (_trailRenderer != null)
             {
-                trailRenderer.emitting = false;
+                _trailRenderer.emitting = false;
             }
 
             // Disable movement
             enabled = false;
 
             // Destroy after a short delay to allow the trail to be visible
-            Destroy(gameObject, trailRenderer != null ? trailRenderer.time : 0.1f);
+            Destroy(gameObject, _trailRenderer != null ? _trailRenderer.time : 0.1f);
         }
     }
 }

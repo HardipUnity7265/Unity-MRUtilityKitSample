@@ -8,6 +8,9 @@ using UnityEngine.Events;
 
 namespace Meta.XR.MRUtilityKitSamples.Basic
 {
+    /// <summary>
+    /// Shows a red tint on the effect mesh when world locking is inactive.
+    /// </summary>
     [MetaCodeSample("MRUKSample-Basic")]
     public class WorldLockTint : MonoBehaviour
     {
@@ -17,7 +20,7 @@ namespace Meta.XR.MRUtilityKitSamples.Basic
         private Color _defaultColor;
         private UnityAction _sceneLoadedAction;
 
-        private void OnEnable()
+        private void Start()
         {
             _sceneLoadedAction = OnSceneLoaded;
             if (MRUK.Instance)
@@ -40,8 +43,7 @@ namespace Meta.XR.MRUtilityKitSamples.Basic
             _wasWorldLockActive = null;
         }
 
-
-        void Update()
+        private void Update()
         {
             if (_wasWorldLockActive == null)
             {
@@ -56,7 +58,7 @@ namespace Meta.XR.MRUtilityKitSamples.Basic
             }
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             if (MRUK.Instance)
             {

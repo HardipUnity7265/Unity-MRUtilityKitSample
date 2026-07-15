@@ -158,12 +158,9 @@ MonoBehaviour:
   - {fileID: -8640937842558921714}
   m_RendererFeatureMap: 2b18c013ad19e8b38552a82c5e9812272bca1373d5a5f8a78d434878d11c3f310e940b58d0381588
   m_UseNativeRenderPass: 0
-  xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
+  xrSystemData: {fileID: 0} 
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
-  m_AssetVersion: 3
-  m_PrepassLayerMask:
-    serializedVersion: 2
-    m_Bits: 2150630431
+  m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
     m_Bits: 2150630431
@@ -242,7 +239,7 @@ MonoBehaviour:
   m_Active: 1
   settings:
     passTag: AfterRenderOpaque
-    Event: 1000
+    Event: 300
     filterSettings:
       RenderQueueType: 0
       LayerMask:
@@ -254,7 +251,7 @@ MonoBehaviour:
     overrideShader: {fileID: 0}
     overrideShaderPassIndex: 0
     overrideMode: 1
-    overrideDepthState: 0
+    overrideDepthState: 1
     depthCompareFunction: 4
     enableWrite: 1
     stencilSettings:

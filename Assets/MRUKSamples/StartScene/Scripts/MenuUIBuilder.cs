@@ -15,10 +15,15 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
     [MetaCodeSample("MRUKSample-StartScene")]
     public class MenuUIBuilder : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
+        /// <summary>The spacing between UI elements in pixels.</summary>
         public float ElementSpacing = 16.0f;
+        /// <summary>The horizontal margin for UI elements in pixels.</summary>
         public float MarginH = 32.0f;
+        /// <summary>The vertical margin for UI elements in pixels.</summary>
         public float MarginV = 32.0f;
+        /// <summary>The distance from the camera at which the UI should be spawned.</summary>
         public float SpawnDistanceFromCamera = 0.3f;
+        /// <summary>The event system used for menu interactions.</summary>
         [Space(5)] public EventSystem MenuEventSystem;
         [SerializeField] private UICursor Cursor;
         [SerializeField] private RectTransform _buttonPrefab;
@@ -29,7 +34,7 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
         private Transform _parentTransform;
         private readonly float _followSpeed = 2.5f;
 
-        private delegate void _onClick();
+        private delegate void OnClick();
 
         private void Awake()
         {
@@ -147,7 +152,7 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
         /// <param name="label">The text to be displayed on the button.</param>
         /// <param name="handler">The delegate to execute when clicking the button.</param>
         /// <returns>The RectTransform of the newly created button.</returns>
-        private RectTransform AddButton(string label, _onClick handler = null)
+        private RectTransform AddButton(string label, OnClick handler = null)
         {
             var buttonRT = Instantiate(_buttonPrefab).GetComponent<RectTransform>();
 
@@ -247,11 +252,13 @@ namespace Meta.XR.MRUtilityKitSamples.StartScene
             }
         }
 
+        /// <summary>Called when the pointer enters the UI element.</summary>
         public void OnPointerEnter(PointerEventData eventData)
         {
             Cursor.gameObject.SetActive(true);
         }
 
+        /// <summary>Called when the pointer exits the UI element.</summary>
         public void OnPointerExit(PointerEventData eventData)
         {
             Cursor.gameObject.SetActive(false);

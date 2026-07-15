@@ -1,18 +1,22 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.MRUtilityKit;
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Meta.XR.Samples;
+using TMPro;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
 {
     [MetaCodeSample("MRUKSample-EnvironmentPanelPlacement")]
     public class EnvironmentPanelPlacement : MonoBehaviour
     {
+        private const string WORLD_LOCK_STATUS_ON = "<color=#00FAFF><b>ON</b></color>";
+        private const string WORLD_LOCK_STATUS_OFF = "<color=\"orange\"><b>OFF</b></color>";
+        private const string WORLD_LOCK_ENABLE_ACTION = "(Use <b>X</b> to toggle this feature)";
+
         [SerializeField] private EnvironmentRaycastManager _raycastManager;
         [SerializeField] private Transform _centerEyeAnchor;
         [SerializeField] private Transform _raycastAnchor;
@@ -22,8 +26,7 @@ namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
         [SerializeField] private Transform _panel;
         [SerializeField] private float _panelAspectRatio = 0.823f;
         [SerializeField] private GameObject _panelGlow;
-        [SerializeField] private SpriteRenderer _panelSprite;
-        [SerializeField] private GameObject _trackingLostLabel;
+        [SerializeField] private TextMeshProUGUI _worldLockStatus;
         [SerializeField] private LineRenderer _raycastVisualizationLine;
         [SerializeField] private Transform _raycastVisualizationNormal;
 
@@ -35,8 +38,12 @@ namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
         private float _distanceFromController;
         private Pose? _environmentPose;
         private EnvironmentRaycastHitStatus _currentEnvHitStatus;
-        private OVRSpatialAnchor _spatialAnchor;
-        private bool _isRestoringAnchorTracking;
+        private OVRCameraRig _cameraRig;
+
+        private void Awake()
+        {
+            _cameraRig = Object.FindAnyObjectByType<OVRCameraRig>();
+        }
 
         private IEnumerator Start()
         {
@@ -55,10 +62,6 @@ namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
             _panel.position = position;
             _panel.rotation = Quaternion.LookRotation(forward);
 
-            // Create the OVRSpatialAnchor and make it a parent of the panel.
-            // This will prevent the panel front drifting after headset lock/unlock.
-            var parent = new GameObject(nameof(OVRSpatialAnchor));
-            CreateSpatialAnchorAndSave(parent.transform);
         }
 
         private void OnApplicationFocus(bool hasFocus)
@@ -67,37 +70,6 @@ namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
             {
                 _isGrabbing = false;
                 _targetPose = null;
-            }
-        }
-
-        private async void CreateSpatialAnchorAndSave(Transform target)
-        {
-            Assert.IsNull(target.GetComponent<OVRSpatialAnchor>());
-            _spatialAnchor = target.gameObject.AddComponent<OVRSpatialAnchor>();
-            target.SetPositionAndRotation(_panel.position, _panel.rotation);
-            _panel.SetParent(target);
-            _panel.SetLocalPositionAndRotation(default, Quaternion.identity);
-
-            // Wait for localization because SaveAnchorAsync() requires the anchor to be localized first.
-            while (true)
-            {
-                if (_spatialAnchor == null)
-                {
-                    // Spatial Anchor destroys itself when creation fails.
-                    return;
-                }
-                if (_spatialAnchor.Localized)
-                {
-                    break;
-                }
-                await Task.Yield();
-            }
-
-            // Save the anchor.
-            var saveAnchorResult = await _spatialAnchor.SaveAnchorAsync();
-            if (!saveAnchorResult.Success)
-            {
-                Debug.LogError($"SaveAnchorAsync() failed {saveAnchorResult}");
             }
         }
 
@@ -117,26 +89,6 @@ namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
                     _panelGlow.SetActive(false);
                     _isGrabbing = false;
                     _environmentPose = null;
-                    if (!_isRestoringAnchorTracking)
-                    {
-                        // If the existing OVRSpatialAnchor if further than 3 meters away from the current panel position, delete it and create a new one:
-                        // https://developers.meta.com/horizon/documentation/unity/unity-spatial-anchors-best-practices#tips-for-using-spatial-anchors
-                        if (_panel.localPosition.magnitude > 3f || _spatialAnchor == null || !_spatialAnchor.IsTracked)
-                        {
-                            if (_spatialAnchor != null)
-                            {
-                                _spatialAnchor.EraseAnchorAsync().ContinueWith(static result =>
-                                {
-                                    if (!result.Success)
-                                    {
-                                        Debug.LogError($"EraseAnchorAsync() failed {result}");
-                                    }
-                                });
-                                DestroyImmediate(_spatialAnchor);
-                            }
-                            CreateSpatialAnchorAndSave(_panel.parent);
-                        }
-                    }
                 }
             }
             else
@@ -158,7 +110,16 @@ namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
                 }
             }
             AnimatePanelPose();
-            UpdateSpatialAnchorTrackingState();
+
+            if (OVRInput.GetUp(OVRInput.RawButton.X))
+            {
+                MRUK.Instance.EnableWorldLock = !MRUK.Instance.EnableWorldLock;
+            }
+            if (_worldLockStatus)
+            {
+                string wlStatus = MRUK.Instance.IsWorldLockActive ? WORLD_LOCK_STATUS_ON : WORLD_LOCK_STATUS_OFF;
+                _worldLockStatus.text = $"World Lock Active: {wlStatus}\n {WORLD_LOCK_ENABLE_ACTION}";
+            }
         }
 
         private Ray GetRaycastRay()
@@ -287,48 +248,6 @@ namespace Meta.XR.MRUtilityKitSamples.EnvironmentPanelPlacement
             bool envHitResult = _raycastManager.Raycast(ray, out envHit);
             _currentEnvHitStatus = envHit.status;
             return envHitResult;
-        }
-
-        private void UpdateSpatialAnchorTrackingState()
-        {
-            bool isTracked = _spatialAnchor != null && _spatialAnchor.IsTracked;
-            _panelSprite.color = isTracked ? Color.white : Color.red;
-            _trackingLostLabel.SetActive(!isTracked);
-            if (_spatialAnchor != null && _spatialAnchor.Localized && !isTracked)
-            {
-                RestoreSpatialAnchorTracking();
-            }
-        }
-
-        private async void RestoreSpatialAnchorTracking()
-        {
-            if (!_isRestoringAnchorTracking)
-            {
-                _isRestoringAnchorTracking = true;
-                await RestoreTracking();
-                _isRestoringAnchorTracking = false;
-            }
-            async ValueTask RestoreTracking()
-            {
-                Assert.IsNotNull(_spatialAnchor);
-                var unboundAnchors = new List<OVRSpatialAnchor.UnboundAnchor>(1);
-                var loadResult = await OVRSpatialAnchor.LoadUnboundAnchorsAsync(new[] { _spatialAnchor.Uuid }, unboundAnchors);
-                if (!loadResult.Success)
-                {
-                    Debug.LogError($"LoadUnboundAnchorsAsync() failed {loadResult.Status}.");
-                    return;
-                }
-                if (unboundAnchors.Count != 0)
-                {
-                    Debug.LogError($"LoadUnboundAnchorsAsync() unexpected count:{unboundAnchors.Count}.");
-                    return;
-                }
-                await Task.Yield();
-                if (_spatialAnchor.IsTracked)
-                {
-                    Debug.Log("Spatial Anchor tracking was restored successfully.");
-                }
-            }
         }
 
         private class RollingAverage

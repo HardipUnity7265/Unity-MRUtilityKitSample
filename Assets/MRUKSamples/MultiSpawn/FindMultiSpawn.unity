@@ -884,8 +884,12 @@ PrefabInstance:
       objectReference: {fileID: 655552109}
     - target: {fileID: 3774492161316796919, guid: 573472cfe1801994c9c525bf12cfa768, type: 3}
       propertyPath: _findSpawnPositions.Array.data[4]
-      value: 
+      value:
       objectReference: {fileID: 7206423110247988464}
+    - target: {fileID: 3774492161316796919, guid: 573472cfe1801994c9c525bf12cfa768, type: 3}
+      propertyPath: _introPanel
+      value:
+      objectReference: {fileID: 6344547389430905392}
     - target: {fileID: 3946535681413462566, guid: 573472cfe1801994c9c525bf12cfa768, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -3492,6 +3496,11 @@ PrefabInstance:
       propertyPath: ButtonPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.GameObject, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 567128848845474537, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
+      propertyPath: m_text
+      value: Using this feature, we will spawn different kinds of targets. How fast
+        can you shoot them all?
+      objectReference: {fileID: 0}
     - target: {fileID: 1264935387580446400, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -3552,6 +3561,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3376947431615733551, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 665cdfaa86c586a42971f735e70a7924, type: 3}
     - target: {fileID: 3988933449780473156, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -3575,6 +3588,10 @@ PrefabInstance:
     - target: {fileID: 4168195544282539409, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4339071345703120003, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
+      propertyPath: m_text
+      value: MultiSpawn
       objectReference: {fileID: 0}
     - target: {fileID: 4685908050567322715, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
       propertyPath: m_Pivot.x
@@ -3678,8 +3695,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6038356932207413842, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
       propertyPath: m_text
-      value: FindSpawnPosition let's you find good spots on different areas where
-        you can spawn your assets
+      value: The MultiSpawn objects in the hierarchy dictate the criteria to spawn
+        different prefabs.
       objectReference: {fileID: 0}
     - target: {fileID: 6588716567306522785, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3745,6 +3762,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -1442.89
       objectReference: {fileID: 0}
+    - target: {fileID: 8595983889706904679, guid: 1f6fba1248e1dbc42acac76ecdf21442, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b3d45eededc9a204fa831e6580483172, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
